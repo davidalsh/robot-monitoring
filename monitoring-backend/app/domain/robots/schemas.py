@@ -1,4 +1,3 @@
-from decimal import Decimal
 from typing import Literal, Optional
 from uuid import UUID
 
@@ -10,7 +9,7 @@ from app.domain.robots.consts import FAN_SPEED_AUTO, LogDetailType, RobotRunning
 class LogDetailSchema(BaseModel):
     message: str
     type: LogDetailType
-    time: Decimal
+    time: float
 
 
 class RobotRunningStateSchema(BaseModel):
@@ -28,8 +27,8 @@ class RobotUpdateSchema(BaseModel):
 
 class RobotStateSchema(BaseModel):
     uuid: UUID
-    temperature: Decimal
-    power_consumption: Decimal
+    temperature: float
+    power_consumption: float
     status: RobotStatus
     fan_speed: int
     uptime: Optional[int]

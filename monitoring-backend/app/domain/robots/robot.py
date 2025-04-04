@@ -1,4 +1,3 @@
-from decimal import Decimal
 from random import randint, uniform
 from time import time as timestamp
 from typing import Optional
@@ -25,7 +24,7 @@ class Robot:
     def _read_current_temperature(self) -> np.float16:
         """Read current robot temperature."""
 
-        current_temperature = np.float16(Decimal("10") + Decimal("100") - self._fan_speed)
+        current_temperature = np.float16(10 + 100 - self._fan_speed)
 
         if current_temperature > 80:
             self.journal.warning(f"Reaching high temperatures {current_temperature}°C.")
@@ -36,7 +35,7 @@ class Robot:
         """Set fan speed based on robot power consumption."""
 
         if self.status is not RobotStatus.OFFLINE:
-            self.fan_speed = int(Decimal(self.power_consumption / MAX_POWER_CONSUMPTION) * Decimal(100))
+            self.fan_speed = int(self.power_consumption / MAX_POWER_CONSUMPTION * 100)
             self.journal.info("Setting fan_speed to auto.")
 
     @property

@@ -25,9 +25,9 @@ def update_robot(
     robot_id: UUID,
     data: RobotUpdateSchema,
     robot_service: RobotService = Depends(RobotService),
-) -> RobotSchema:
+) -> RobotUpdateSchema:
     robot = robot_service.update_robot(robot_id, data)
-    return RobotSchema(robot_id=robot.uuid, status=robot.status)
+    return RobotUpdateSchema(fan_speed=robot.fan_speed)
 
 
 @router.post("/robots/{robot_id}/power")
