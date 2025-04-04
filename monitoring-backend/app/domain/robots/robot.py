@@ -6,7 +6,7 @@ from uuid import UUID, uuid4
 
 import numpy as np
 
-from app.domain.logging.log_history import LogHistory
+from app.domain.common.log_history import LogHistory
 from app.domain.robots.consts import MAX_POWER_CONSUMPTION, POWER_CONSUMPTION_STATUS_MAP, RobotStatus
 
 

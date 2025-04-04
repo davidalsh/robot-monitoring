@@ -2,7 +2,7 @@ from typing import Iterable
 from uuid import UUID, uuid4
 
 from app.domain.common.exceptions import DetailNotFound, ImpossibleAction
-from app.domain.logging.log_history import LogHistory
+from app.domain.common.log_history import LogHistory
 from app.domain.robots.consts import FAN_SPEED_AUTO, RobotRunningStateAction, RobotStatus
 from app.domain.robots.robot import Robot
 from app.domain.robots.schemas import RobotUpdateSchema
