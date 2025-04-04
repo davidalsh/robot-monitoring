@@ -1,13 +1,13 @@
 from decimal import Decimal
 from random import randint, uniform
-from typing import Optional
-from uuid import uuid4, UUID
 from time import time as timestamp
+from typing import Optional
+from uuid import UUID, uuid4
 
 import numpy as np
 
 from app.domain.logging.log_history import LogHistory
-from app.domain.robots.consts import RobotStatus, POWER_CONSUMPTION_STATUS_MAP, MAX_POWER_CONSUMPTION
+from app.domain.robots.consts import MAX_POWER_CONSUMPTION, POWER_CONSUMPTION_STATUS_MAP, RobotStatus
 
 
 class Robot:
@@ -36,9 +36,7 @@ class Robot:
         """Set fan speed based on robot power consumption."""
 
         if self.status is not RobotStatus.OFFLINE:
-            self.fan_speed = int(Decimal(
-                self.power_consumption / MAX_POWER_CONSUMPTION
-            ) * Decimal(100))
+            self.fan_speed = int(Decimal(self.power_consumption / MAX_POWER_CONSUMPTION) * Decimal(100))
             self.journal.info("Setting fan_speed to auto.")
 
     @property

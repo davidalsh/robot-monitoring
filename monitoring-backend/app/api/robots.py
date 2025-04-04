@@ -6,14 +6,16 @@ from fastapi.params import Depends
 from starlette.status import HTTP_204_NO_CONTENT
 from starlette.websockets import WebSocket
 
-from app.domain.robots.schemas import RobotStateSchema, RobotSchema, RobotRunningStateSchema, RobotUpdateSchema
+from app.domain.robots.schemas import RobotRunningStateSchema, RobotSchema, RobotStateSchema, RobotUpdateSchema
 from app.domain.robots.services import RobotService
 
 router = APIRouter(prefix="/api/v1")
 
 
 @router.get("/robots/")
-def list_robots(robot_service: RobotService = Depends(RobotService)) -> list[RobotSchema]:
+def list_robots(
+    robot_service: RobotService = Depends(RobotService),
+) -> list[RobotSchema]:
     robots = robot_service.get_all_robots()
     return [RobotSchema(robot_id=robot.uuid, status=robot.status) for robot in robots]
 

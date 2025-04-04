@@ -1,7 +1,7 @@
 import logging
+from time import time as timestamp
 from typing import Optional
 from uuid import UUID
-from time import time as timestamp
 
 from app.domain.robots.consts import LogDetailType
 from app.domain.robots.schemas import LogDetailSchema
@@ -10,6 +10,7 @@ from logger import get_logger
 
 class LogHistory:
     """Custom Robot logger."""
+
     def __init__(self, uuid):
         self.uuid: UUID = uuid
         self.logger = get_logger()
@@ -38,4 +39,3 @@ class LogHistory:
 
     def clear(self):
         self.logs.clear()
-

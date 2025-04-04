@@ -1,10 +1,10 @@
 from decimal import Decimal
-from typing import Optional, Literal
+from typing import Literal, Optional
 from uuid import UUID
 
 from pydantic import BaseModel
 
-from app.domain.robots.consts import LogDetailType, RobotRunningStateAction, RobotStatus, FAN_SPEED_AUTO
+from app.domain.robots.consts import FAN_SPEED_AUTO, LogDetailType, RobotRunningStateAction, RobotStatus
 
 
 class LogDetailSchema(BaseModel):

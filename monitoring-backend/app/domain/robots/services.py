@@ -1,16 +1,13 @@
 from typing import Iterable
-from uuid import uuid4, UUID
+from uuid import UUID, uuid4
 
 from app.domain.common.exceptions import DetailNotFound, ImpossibleAction
 from app.domain.logging.log_history import LogHistory
+from app.domain.robots.consts import FAN_SPEED_AUTO, RobotRunningStateAction, RobotStatus
 from app.domain.robots.robot import Robot
 from app.domain.robots.schemas import RobotUpdateSchema
-from app.domain.robots.consts import RobotRunningStateAction, RobotStatus, FAN_SPEED_AUTO
 
-robots = {
-    robot_id: Robot(robot_id, LogHistory(robot_id))
-    for robot_id in [uuid4() for _ in range(3)]
-}
+robots = {robot_id: Robot(robot_id, LogHistory(robot_id)) for robot_id in [uuid4() for _ in range(3)]}
 
 
 class RobotService:

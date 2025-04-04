@@ -1,7 +1,5 @@
 import logging
-
 import os
-
 
 LOG_LEVEL_MAP = {
     "INFO": logging.INFO,
