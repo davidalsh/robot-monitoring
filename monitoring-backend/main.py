@@ -3,11 +3,13 @@ from starlette.responses import JSONResponse
 
 from app.api.robots import router as robots_router
 from app.domain.common.exceptions import DomainException
+from cli_attr import LOG_LEVEL, REFRESH_FREQUENCY_HZ
 from logger import get_logger
 
 app = FastAPI()
 
 logger = get_logger()
+logger.warning(f"WARNING:  RUNNING APP WITH {REFRESH_FREQUENCY_HZ=} AND {LOG_LEVEL=}")
 
 
 @app.exception_handler(DomainException)

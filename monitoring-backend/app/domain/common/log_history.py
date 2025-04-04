@@ -10,7 +10,7 @@ from logger import get_logger
 class LogHistory:
     """Custom Robot logger."""
 
-    def __init__(self, uuid):
+    def __init__(self, uuid: UUID):
         self.uuid: UUID = uuid
         self.logger = get_logger()
         self.logs: list[LogDetailSchema] = []

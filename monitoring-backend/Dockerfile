@@ -1,10 +1,6 @@
 FROM python:3.11-slim
 
 ENV PYTHONPATH="/monitoring-backend"
-ENV HOST="0.0.0.0"
-ENV PORT=5487
-ENV LOG_LEVEL="INFO"
-ENV REFESH_FREQUENCY="10Hz"
 
 WORKDIR /monitoring-backend
 
@@ -17,6 +13,4 @@ RUN poetry config virtualenvs.create false \
 
 COPY . /monitoring-backend
 
-RUN chmod +x start.sh
-
-CMD ["./start.sh"]
+CMD ["python3", "start.py"]

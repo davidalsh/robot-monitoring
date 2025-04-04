@@ -8,6 +8,7 @@ from starlette.websockets import WebSocket
 
 from app.domain.robots.schemas import RobotRunningStateSchema, RobotSchema, RobotStateSchema, RobotUpdateSchema
 from app.domain.robots.services import RobotService
+from cli_attr import REFRESH_FREQUENCY_HZ
 
 router = APIRouter(prefix="/api/v1")
 
@@ -66,4 +67,4 @@ async def state_websocket(websocket: WebSocket, robot_service: RobotService = De
                 await websocket.send_json(current_data)
                 current_data.uptime = None
                 previous_robots[robot.uuid] = current_data
-        time.sleep(0.1)
+        time.sleep(1 / REFRESH_FREQUENCY_HZ)
