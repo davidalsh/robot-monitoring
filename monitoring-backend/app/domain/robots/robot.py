@@ -60,14 +60,6 @@ class Robot:
 
         self._status = value
 
-    @property
-    def uptime(self) -> Optional[int]:
-        """Calculate robot's uptime."""
-
-        if self.status == RobotStatus.OFFLINE:
-            return
-        return np.uint32(timestamp() - self.boot_time)
-
     def turn_on(self):
         """Turn on robot power switch."""
         self.status = RobotStatus.RUNNING

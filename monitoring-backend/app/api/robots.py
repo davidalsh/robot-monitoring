@@ -1,4 +1,4 @@
-import time
+import asyncio
 from uuid import UUID
 
 from fastapi import APIRouter
@@ -18,18 +18,7 @@ def list_robots(
     robot_service: RobotService = Depends(RobotService),
 ) -> list[RobotStateSchema]:
     robots = robot_service.get_all_robots()
-    return [
-        RobotStateSchema(
-            uuid=robot.uuid,
-            temperature=robot.temperature,
-            power_consumption=robot.power_consumption,
-            status=robot.status,
-            fan_speed=robot.fan_speed,
-            uptime=None,
-            logs=robot.journal.logs,
-        )
-        for robot in robots
-    ]
+    return [RobotStateSchema.from_robot_instance(robot) for robot in robots]
 
 
 @router.patch("/robots/{robot_id}")
@@ -59,23 +48,17 @@ def reset_robot(robot_id: UUID, robot_service: RobotService = Depends(RobotServi
 
 @router.websocket("/ws/robots/state")
 async def state_websocket(websocket: WebSocket, robot_service: RobotService = Depends(RobotService)):
-    robots = robot_service.get_all_robots()
     await websocket.accept()
-    previous_robots = {}
+    robots = robot_service.get_all_robots()
+    previous_robots = {robot.uuid: RobotStateSchema.from_robot_instance(robot) for robot in robots}
+
     while True:
+        robots = robot_service.get_all_robots()
         for robot in robots:
-            current_data = RobotStateSchema(
-                uuid=robot.uuid,
-                temperature=robot.temperature,
-                power_consumption=robot.power_consumption,
-                status=robot.status,
-                fan_speed=robot.fan_speed,
-                uptime=None,
-                logs=robot.journal.logs,
-            )
+            current_data = RobotStateSchema.from_robot_instance(robot)
             if current_data != previous_robots.get(robot.uuid):
-                current_data.uptime = robot.uptime
-                await websocket.send_json(current_data)
-                current_data.uptime = None
+                await websocket.send_json(current_data.model_dump(mode="json"))
                 previous_robots[robot.uuid] = current_data
-        time.sleep(1 / REFRESH_FREQUENCY_HZ)
+
+        await asyncio.sleep(1 / REFRESH_FREQUENCY_HZ)
+

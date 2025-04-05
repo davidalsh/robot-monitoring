@@ -1,9 +1,12 @@
-from typing import Literal, Optional
+from typing import Literal, TYPE_CHECKING
 from uuid import UUID
 
 from pydantic import BaseModel, field_validator
 
 from app.domain.robots.consts import FAN_SPEED_AUTO, LogDetailType, RobotRunningStateAction, RobotStatus
+
+if TYPE_CHECKING:
+    from app.domain.robots.robot import Robot
 
 
 class LogDetailSchema(BaseModel):
@@ -31,10 +34,22 @@ class RobotStateSchema(BaseModel):
     power_consumption: float
     status: RobotStatus
     fan_speed: int
-    uptime: Optional[int]
+    boot_time: int
     logs: list[LogDetailSchema]
 
     @field_validator("power_consumption")
     @staticmethod
-    def result_check(value):
+    def prepare_power_consumption(value: float) -> float:
         return round(value, 2)
+
+    @staticmethod
+    def from_robot_instance(robot: "Robot") -> "RobotStateSchema":
+        return RobotStateSchema(
+            uuid=robot.uuid,
+            temperature=robot.temperature,
+            power_consumption=robot.power_consumption,
+            status=robot.status,
+            fan_speed=robot.fan_speed,
+            boot_time=robot.boot_time,
+            logs=robot.journal.logs,
+        )
