@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
 from app.api.robots import router as robots_router
@@ -19,5 +20,18 @@ async def domain_exception_handler(request: Request, exc: DomainException):
         content={"message": exc.message, "code": exc.code, "status": exc.status_code},
     )
 
+
+origins = [
+    "http://localhost",
+    "http://localhost:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(robots_router)

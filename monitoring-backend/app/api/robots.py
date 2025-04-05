@@ -16,9 +16,20 @@ router = APIRouter(prefix="/api/v1")
 @router.get("/robots/")
 def list_robots(
     robot_service: RobotService = Depends(RobotService),
-) -> list[RobotSchema]:
+) -> list[RobotStateSchema]:
     robots = robot_service.get_all_robots()
-    return [RobotSchema(robot_id=robot.uuid, status=robot.status) for robot in robots]
+    return [
+        RobotStateSchema(
+            uuid=robot.uuid,
+            temperature=robot.temperature,
+            power_consumption=robot.power_consumption,
+            status=robot.status,
+            fan_speed=robot.fan_speed,
+            uptime=None,
+            logs=robot.journal.logs,
+        )
+        for robot in robots
+    ]
 
 
 @router.patch("/robots/{robot_id}")

@@ -16,10 +16,10 @@ def main():
     args = parser.parse_args()
 
     if not args.refresh_hz.isdigit():
-        raise ValueError(f"Refresh frequency must be an integer.")
+        raise ValueError("Refresh frequency must be an integer.")
 
     if int(args.refresh_hz) <= 0:
-        raise ValueError(f"Refresh frequency must be greater than 0.")
+        raise ValueError("Refresh frequency must be greater than 0.")
 
     if args.log_level not in VALID_LOG_LEVELS:
         raise ValueError(f"Provided LOG LEVEL does not exist. Choices are: {VALID_LOG_LEVELS}.")

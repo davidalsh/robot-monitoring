@@ -1,7 +1,7 @@
 from typing import Literal, Optional
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from app.domain.robots.consts import FAN_SPEED_AUTO, LogDetailType, RobotRunningStateAction, RobotStatus
 
@@ -33,3 +33,8 @@ class RobotStateSchema(BaseModel):
     fan_speed: int
     uptime: Optional[int]
     logs: list[LogDetailSchema]
+
+    @field_validator("power_consumption")
+    @staticmethod
+    def result_check(value):
+        return round(value, 2)

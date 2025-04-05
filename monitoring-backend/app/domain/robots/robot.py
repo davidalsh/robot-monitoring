@@ -18,7 +18,7 @@ class Robot:
         self._status: RobotStatus = RobotStatus.IDLE
         self._fan_speed: np.int8 = np.int8(randint(0, 100))
         self.temperature: np.float16 = self._read_current_temperature()
-        self.power_consumption: np.float16 = np.float16(round(uniform(*POWER_CONSUMPTION_STATUS_MAP[self.status]), 2))
+        self.power_consumption: np.float16 = np.float16(uniform(*POWER_CONSUMPTION_STATUS_MAP[self.status]))
         self.boot_time: Optional[np.uint32] = np.uint32(timestamp())
 
     def _read_current_temperature(self) -> np.float16:
