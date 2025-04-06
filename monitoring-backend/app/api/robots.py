@@ -1,4 +1,5 @@
 import asyncio
+from random import random
 from uuid import UUID
 
 from fastapi import APIRouter
@@ -59,10 +60,13 @@ async def state_websocket(websocket: WebSocket, robot_service: RobotService = De
         while True:
             robots = robot_service.get_all_robots()
             for robot in robots:
+                real_temperature = robot.temperature
+                robot.temperature += random()  # imitation of temperature change
                 current_data = RobotStateSchema.from_robot_instance(robot)
                 if current_data != previous_robots.get(robot.uuid):
                     await websocket.send_json(current_data.model_dump(mode="json"))
                     previous_robots[robot.uuid] = current_data
+                robot.temperature = real_temperature
 
             await asyncio.sleep(1 / REFRESH_FREQUENCY_HZ)
     except WebSocketDisconnect:
