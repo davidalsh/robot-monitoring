@@ -7,7 +7,11 @@ from app.domain.robots.consts import FAN_SPEED_AUTO, RobotRunningStateAction, Ro
 from app.domain.robots.robot import Robot
 from app.domain.robots.schemas import RobotUpdateSchema
 
-robots = {robot_id: Robot(robot_id, LogHistory(robot_id)) for robot_id in [uuid4() for _ in range(3)]}
+robots = {robot_id: Robot(robot_id, LogHistory(robot_id)) for robot_id in [uuid4() for _ in range(5)]}
+last_robot = list(robots.values())[-1]
+last_robot.power_consumption = 0
+last_robot.set_auto_fan_speed()
+last_robot.status = RobotStatus.OFFLINE
 
 
 class RobotService:
@@ -30,6 +34,9 @@ class RobotService:
         """Update robot fan speed."""
 
         robot = self.get_robot_by_id(robot_id)
+        if robot.status == RobotStatus.OFFLINE:
+            raise ImpossibleAction("Impossible to change offline robot state.")
+
         if data.fan_speed == FAN_SPEED_AUTO:
             robot.set_auto_fan_speed()
             return robot
@@ -43,6 +50,10 @@ class RobotService:
         """Switch robot power button."""
 
         robot = self.get_robot_by_id(robot_id)
+
+        if robot.status == RobotStatus.OFFLINE:
+            raise ImpossibleAction("Impossible to change offline robot state.")
+
         if action == RobotRunningStateAction.TURN_ON:
             robot.turn_on()
         else:
@@ -55,5 +66,5 @@ class RobotService:
 
         robot = self.get_robot_by_id(robot_id)
         if robot.status not in [RobotStatus.ERROR, RobotStatus.IDLE]:
-            raise ImpossibleAction
+            raise ImpossibleAction(f"Impossible to reset robot that has {robot.status.value.lower()} status.")
         robot.reset()

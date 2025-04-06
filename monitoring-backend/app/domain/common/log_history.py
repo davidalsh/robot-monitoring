@@ -26,12 +26,11 @@ class LogHistory:
         self._create_log(message, LogDetailType.ERROR)
 
     def _create_log(self, message: str, log_level: Optional[LogDetailType] = None):
-        message = f"{self.log_prefix} {message}"
         if log_level == LogDetailType.WARNING:
-            self.logger.warning(message)
+            self.logger.warning(f"{self.log_prefix} {message}")
             self.logs.append(LogDetailSchema(type=log_level, message=message, time=timestamp()))
         elif log_level == LogDetailType.ERROR:
-            self.logger.error(message)
+            self.logger.error(f"{self.log_prefix} {message}")
             self.logs.append(LogDetailSchema(type=log_level, message=message, time=timestamp()))
         else:
             self.logger.info(message)

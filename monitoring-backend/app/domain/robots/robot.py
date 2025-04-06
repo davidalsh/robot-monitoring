@@ -6,7 +6,7 @@ from uuid import UUID, uuid4
 import numpy as np
 
 from app.domain.common.log_history import LogHistory
-from app.domain.robots.consts import MAX_POWER_CONSUMPTION, POWER_CONSUMPTION_STATUS_MAP, RobotStatus
+from app.domain.robots.consts import POWER_CONSUMPTION_STATUS_MAP, RobotStatus
 
 
 class Robot:
@@ -14,29 +14,33 @@ class Robot:
 
     def __init__(self, uuid: UUID, journal: LogHistory):
         self.uuid: uuid4 = uuid
+        self.name: str = f"Robot {str(uuid)[:4]}"
         self.journal: LogHistory = journal
         self._status: RobotStatus = RobotStatus.IDLE
         self._fan_speed: np.int8 = np.int8(randint(0, 100))
-        self.temperature: np.float16 = self._read_current_temperature()
-        self.power_consumption: np.float16 = np.float16(uniform(*POWER_CONSUMPTION_STATUS_MAP[self.status]))
+        self.power_consumption: np.float16 = self._read_power_consumption_sensor()
+        self.temperature: np.float16 = self._read_temperature_sensor()
         self.boot_time: Optional[np.uint32] = np.uint32(timestamp())
 
-    def _read_current_temperature(self) -> np.float16:
-        """Read current robot temperature."""
-
-        current_temperature = np.float16(10 + 100 - self._fan_speed)
-
-        if current_temperature > 80:
-            self.journal.warning(f"Reaching high temperatures {current_temperature}°C.")
-
-        return current_temperature
+    def _read_power_consumption_sensor(self) -> np.float16:
+        """Read robot current power consumption."""
+        return np.float16(uniform(*POWER_CONSUMPTION_STATUS_MAP[self.status]))
 
     def set_auto_fan_speed(self):
         """Set fan speed based on robot power consumption."""
-
         if self.status is not RobotStatus.OFFLINE:
-            self.fan_speed = int(self.power_consumption / MAX_POWER_CONSUMPTION * 100)
+            self.fan_speed = int(self.power_consumption / POWER_CONSUMPTION_STATUS_MAP[self.status][1] * 100)
             self.journal.info("Setting fan_speed to auto.")
+
+    def _read_temperature_sensor(self) -> np.float16:
+        """Read robot current temperature based on power consumption and fan speed."""
+        current_temperature = np.float16(self.power_consumption * 5 * (100 - self.fan_speed) / 100)
+        if current_temperature > 80:
+            self.journal.error(f"Reached critical temperature {current_temperature}°C.")
+            self.status = RobotStatus.ERROR
+        elif current_temperature > 60:
+            self.journal.warning(f"Reaching high temperatures {current_temperature}°C.")
+        return current_temperature
 
     @property
     def fan_speed(self) -> np.int8:
@@ -45,7 +49,7 @@ class Robot:
     @fan_speed.setter
     def fan_speed(self, value: int):
         self._fan_speed = max(0, min(100, value))
-        self.temperature = self._read_current_temperature()
+        self.temperature = self._read_temperature_sensor()
 
     @property
     def status(self) -> RobotStatus:
@@ -53,12 +57,16 @@ class Robot:
 
     @status.setter
     def status(self, value: RobotStatus):
+        """Change robot status, update power consumption basing on new status and set fan speed to auto."""
         if self._status == RobotStatus.OFFLINE and value != RobotStatus.OFFLINE:
             self.boot_time = np.uint32(timestamp())
         elif self._status != RobotStatus.OFFLINE and value == RobotStatus.OFFLINE:
             self.boot_time = None
 
         self._status = value
+        self.power_consumption = self._read_power_consumption_sensor()
+        if value != RobotStatus.ERROR:
+            self.set_auto_fan_speed()
 
     def turn_on(self):
         """Turn on robot power switch."""
@@ -73,6 +81,6 @@ class Robot:
         self.journal.warning("The robot attempts to reset.")
 
         self.boot_time = np.uint32(timestamp())
-        self._status: RobotStatus = RobotStatus.IDLE
+        self.status = RobotStatus.IDLE
 
         self.journal.clear()

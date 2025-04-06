@@ -4,13 +4,16 @@ from uuid import UUID
 from fastapi import APIRouter
 from fastapi.params import Depends
 from starlette.status import HTTP_204_NO_CONTENT
-from starlette.websockets import WebSocket
+from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from app.domain.robots.schemas import RobotRunningStateSchema, RobotSchema, RobotStateSchema, RobotUpdateSchema
 from app.domain.robots.services import RobotService
 from cli_attr import REFRESH_FREQUENCY_HZ
+from logger import get_logger
 
 router = APIRouter(prefix="/api/v1")
+
+logger = get_logger()
 
 
 @router.get("/robots/")
@@ -52,13 +55,15 @@ async def state_websocket(websocket: WebSocket, robot_service: RobotService = De
     robots = robot_service.get_all_robots()
     previous_robots = {robot.uuid: RobotStateSchema.from_robot_instance(robot) for robot in robots}
 
-    while True:
-        robots = robot_service.get_all_robots()
-        for robot in robots:
-            current_data = RobotStateSchema.from_robot_instance(robot)
-            if current_data != previous_robots.get(robot.uuid):
-                await websocket.send_json(current_data.model_dump(mode="json"))
-                previous_robots[robot.uuid] = current_data
+    try:
+        while True:
+            robots = robot_service.get_all_robots()
+            for robot in robots:
+                current_data = RobotStateSchema.from_robot_instance(robot)
+                if current_data != previous_robots.get(robot.uuid):
+                    await websocket.send_json(current_data.model_dump(mode="json"))
+                    previous_robots[robot.uuid] = current_data
 
-        await asyncio.sleep(1 / REFRESH_FREQUENCY_HZ)
-
+            await asyncio.sleep(1 / REFRESH_FREQUENCY_HZ)
+    except WebSocketDisconnect:
+        logger.info("Websocket disconnect.")

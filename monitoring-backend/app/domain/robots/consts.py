@@ -26,5 +26,3 @@ POWER_CONSUMPTION_STATUS_MAP = {
     RobotStatus.OFFLINE: (0, 0),
     RobotStatus.ERROR: (7, 10),
 }
-
-MAX_POWER_CONSUMPTION = 60
