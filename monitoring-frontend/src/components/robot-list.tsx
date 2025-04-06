@@ -28,7 +28,8 @@ function RobotList({ setCount }: { setCount: React.Dispatch<React.SetStateAction
     }, []);
 
     React.useEffect(() => {
-      wsRef.current = new WebSocket("ws://127.0.0.1:8000/api/v1/ws/robots/state");
+      const wsPath = import.meta.env.VITE_WEBSOCKET_URL;
+      wsRef.current = new WebSocket(`${wsPath}/ws/robots/state`);
 
       wsRef.current.onmessage = (event: MessageEvent) => {
         try {

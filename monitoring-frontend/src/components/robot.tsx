@@ -55,7 +55,7 @@ function Robot({ robot } : { robot: TRobot }) {
     }
     return (
         <Card className={isOffline ? "bg-primary/10" : "relative"}>
-            <CardContent className="flex flex-col gap-2 md:gap-2 md:flex-row items-center justify-between pl-2">
+            <CardContent className="flex flex-col gap-2 md:flex-row items-center justify-between pl-2">
                 <div className="flex gap-2">
                     <div className="flex flex-col text-center justify-center items-center gap-2 w-[64px]">
                         <Switch disabled={isOffline} checked={powerOn} onCheckedChange={toggleRobotPower}
@@ -68,7 +68,7 @@ function Robot({ robot } : { robot: TRobot }) {
 
                 </div>
                 <div className="grid grid-cols-2 justify-items-center sm:flex sm:flex-row text-center items-center gap-5">
-                    <span className="min-w-16"><Badge className={cn(statusStyles, "h-7")}
+                    <span className="w-16"><Badge className={cn(statusStyles, "h-7")}
                                                       variant="secondary">{robot.status}</Badge></span>
                     <span className="sm:w-16">{ isOffline  ? "-" : upTime || "-" }</span>
                     <span className="w-16">{ isOffline ? "-" : robot.fan_speed + "%"}</span>
