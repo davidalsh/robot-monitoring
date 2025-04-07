@@ -1,8 +1,13 @@
 # Robot monitoring application
 
+## Technologies:
+* Python
+* FastAPI
+
 ***
 ## Reqs:
 * Python (3.11=<)
+***
 
 ## Setup
 1. clone the repo
