@@ -72,7 +72,7 @@ function Robot({ robot } : { robot: TRobot }) {
                                                       variant="secondary">{robot.status}</Badge></span>
                     <span className="sm:w-16">{ isOffline  ? "-" : upTime || "-" }</span>
                     <span className="w-16">{ isOffline ? "-" : robot.fan_speed + "%"}</span>
-                    <span className="w-16">{ isOffline ? "N/A" : robot.power_consumption + "W"}</span>
+                    <span className="w-16">{ isOffline ? "-" : robot.power_consumption + "W"}</span>
                     <span className={cn(temperatureStyles, "w-16")}>{ isOffline ? "-" : robot.temperature + "°C"}</span>
                     <div className="flex gap-2">
                         <RobotUpgrade disabled={isOffline} robotUUID={robot.uuid} fanSpeed={robot.fan_speed}/>
