@@ -13,4 +13,4 @@ RUN poetry config virtualenvs.create false \
 
 COPY . /monitoring-backend
 
-CMD ["python3", "start.py"]
+CMD ["python3", "monitoring.py"]
